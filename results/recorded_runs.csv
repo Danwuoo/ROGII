@@ -1,0 +1,3 @@
+run_id,model_id,scope,pooled_row_rmse,oof_wells,oof_rows,recorded_utc,note
+reset-flat-full,flat,full,15.909852870734596,773,3783989,2026-07-24T17:04:32.238672+00:00,"Post-reset Flat full parity: 3,783,989 rows; historical RMSE reproduced."
+reset-p3-full,p3,full,15.452548219508255,773,3783989,2026-07-24T17:11:25.021394+00:00,"Post-reset P3 full parity: 3,783,989 rows; historical RMSE reproduced."

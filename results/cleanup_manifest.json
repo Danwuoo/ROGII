@@ -1,0 +1,47 @@
+{
+  "reset_date_local": "2026-07-25",
+  "original_commit": "4ce18a528154f640e8603d5aea63a5bf5c6b4575",
+  "legacy_bundle": {
+    "path": "C:\\Users\\wurre\\Desktop\\ROGII-legacy-20260725.bundle",
+    "bytes": 31263821,
+    "sha256": "8679EA07C307DF84E51F91EE3DF5BADE0DB569F694370E021C5C3006F7689F94",
+    "verified_clone_head": "4ce18a528154f640e8603d5aea63a5bf5c6b4575"
+  },
+  "historical_audit": {
+    "path": "audit/competition_audit_v2.md",
+    "sha256": "2A2F1C9C7D3A283AE873351A8E957C1BBE8C00A73547C4DB36EEB156D30680CF"
+  },
+  "permanently_deleted_ignored_artifacts": {
+    "files": 9878,
+    "bytes": 6958417318,
+    "included_in_bundle": false
+  },
+  "deleted_post_reset_validation_runs": {
+    "files": 1702,
+    "bytes": 1786705956,
+    "summaries_retained_under_results": true
+  },
+  "removed_from_active_tree": {
+    "build_bytes": 1141028,
+    "dist_bytes": 9585607,
+    "docs_bytes": 9818451,
+    "reports_bytes": 255956,
+    "research_bytes": 273509,
+    "scripts_bytes": 1175248,
+    "legacy_source_bytes": 3265126
+  },
+  "preserved_local_data": {
+    "files": 2327,
+    "bytes": 1325112684,
+    "tracked_in_new_history": false
+  },
+  "parity": {
+    "flat_oof_rows": 3783989,
+    "flat_rmse": 15.909852870734595,
+    "p3_oof_rows": 3783989,
+    "p3_rmse": 15.452548219508255,
+    "p3_historical_delta": 8.25473023269296e-12,
+    "flat_submission_rows": 14151,
+    "p3_submission_rows": 14151
+  }
+}
