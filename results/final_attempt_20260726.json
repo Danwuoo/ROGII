@@ -1,0 +1,54 @@
+{
+  "date": "2026-07-26",
+  "goal_rmse": 4.0,
+  "goal_achieved": false,
+  "fold_version": "priority1_5fold_v1",
+  "fold_sha256": "7F1772817A95277696EB32085DA7618E2671E3ECE49F0DB00FFE1BC03C07C72E",
+  "oof_wells": 773,
+  "oof_rows": 3783989,
+  "models": {
+    "flat": {
+      "pooled_row_rmse": 15.909852870734554
+    },
+    "p3": {
+      "pooled_row_rmse": 15.45254821950825,
+      "delta_vs_flat": -0.4573046512263037
+    },
+    "path_pca": {
+      "pooled_row_rmse": 15.364153199108625,
+      "delta_vs_flat": -0.545699671625929
+    },
+    "p3_path_fixed_equal_blend": {
+      "pooled_row_rmse": 15.17206147508338,
+      "delta_vs_flat": -0.7377913956511737,
+      "evidence_status": "post-hoc fixed-weight research blend; not an independent confirmatory trial",
+      "path_weight": 0.5,
+      "p3_weight": 0.5,
+      "candidate_better_wells": 451,
+      "candidate_worse_wells": 322,
+      "bootstrap_delta_q025": -1.1041126883244041,
+      "bootstrap_delta_q975": -0.40054180439499093,
+      "tail": {
+        "p50_rmse": 10.100654485474646,
+        "p90_rmse": 22.052525864633648,
+        "p95_rmse": 26.874628255784444,
+        "max_rmse": 70.72665438425706,
+        "wells_rmse_ge_40": 12,
+        "wells_rmse_ge_60": 2,
+        "worst_10pct_sse_share": 0.5203940553658266
+      }
+    }
+  },
+  "negative_results": {
+    "signed_lattice_quick5_rmse": 25.44179408882436,
+    "contextual_emission_fold0_posterior_rmse": 14.867270962111004,
+    "contextual_emission_fold0_flat_rmse": 14.097698754399508,
+    "nested_path_pca_quick5_rmse": 16.34937836334676,
+    "anchor_path_pca_quick5_delta_vs_original": 4.6237304651697286e-07
+  },
+  "remaining_sse_reduction_to_goal": 0.9304926397507527,
+  "verdict": "No credible path to strict full OOF RMSE below 4 with the currently legal observations.",
+  "kaggle_submission_created": false,
+  "kaggle_submission_uploaded": false,
+  "test_status": "98 passed in 61.73s"
+}

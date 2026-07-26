@@ -28,6 +28,9 @@ data/rogii-wellbore-geology-prediction/
 $dataRoot = "data/rogii-wellbore-geology-prediction"
 
 rogii check --data-root $dataRoot
+rogii slp-e0 --data-root $dataRoot --output-root .runs --run-id slp-e0-full --workers 4
+rogii slp-e1 --profile quick --data-root $dataRoot --fold-config configs/folds/main_5fold.csv --output-root .runs --run-id slp-e1-quick --seed 20260725 --workers 4
+rogii slp-e1 --profile full --data-root $dataRoot --fold-config configs/folds/main_5fold.csv --output-root .runs --run-id slp-e1-full --seed 20260725 --workers 4
 rogii run --model p3 --profile quick --data-root $dataRoot
 rogii run --model p3 --profile full --run-id p3-full --data-root $dataRoot
 rogii record --run .runs/p3-full --note "full five-fold reference"
@@ -42,6 +45,23 @@ rogii submit --run .runs/p3-full --data-root $dataRoot --output submission.csv
 - `.runs/` 保存 cache、fold models、OOF 與 diagnostics，但不進 Git。
 - `rogii record` 只把小型 JSON/CSV 摘要寫入 `results/`。
 - `rogii submit` 只產生本機 CSV，不會上傳 Kaggle。
+
+`rogii slp-e0` 是獨立的 representation diagnostic，會讀取全部 training
+target `TVT` 與 training-only formation surfaces，量測 polynomial、
+piecewise、prefix recurrence 與 surface identity 的 oracle floor。它固定標記
+`uses_target=true`、`deployable=false`、`submission_eligible=false`，不可用於
+model registry、test inference 或 submission。正式定義見
+[`audit/stratigraphic_program_slam_experiment_protocol.md`](audit/stratigraphic_program_slam_experiment_protocol.md)
+的 7.1 節。
+
+`rogii slp-e1` 將 inference-safe edge generator 與 target-bearing diagnostic
+harness 分開。前者只使用 horizontal `MD, X, Y, Z, GR, TVT_input` 與
+typewell `TVT, GR` 建立 PF／FF／HT candidates；後者只在 outer-training
+wells 的 artificial cuts 上校準 confidence 與選 threshold，並在 candidate、
+confidence 和 accept/reject 全部固定後才讀 outer-validation target 評分。
+它只輸出 loop-edge feasibility diagnostics，不產生 TVT prediction、不進 model
+registry，也不可用於 submission。正式定義與驗證契約見同一協議的
+[7.2 節](audit/stratigraphic_program_slam_experiment_protocol.md#72-slp-e1--loop-closure-feasibility)。
 
 ## 開發新模型
 

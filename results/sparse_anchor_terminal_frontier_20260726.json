@@ -1,0 +1,63 @@
+{
+  "date": "2026-07-26",
+  "fold_version": "priority1_5fold_v1",
+  "fold_sha256": "7F1772817A95277696EB32085DA7618E2671E3ECE49F0DB00FFE1BC03C07C72E",
+  "wells": 773,
+  "rows": 3783989,
+  "acausal_minimum_passing": {
+    "policy": "near_terminal",
+    "k": 5,
+    "fractions": [0.2, 0.4, 0.6, 0.8, 0.975],
+    "pooled_rmse": 3.9890605848357032,
+    "non_anchor_rmse": 3.9910993777694324,
+    "fold_max_rmse": 4.200754754897365,
+    "bootstrap_candidate_rmse_q025": 3.842228542719399,
+    "bootstrap_candidate_rmse_q50": 3.9873608801977536,
+    "bootstrap_candidate_rmse_q975": 4.134912038355777,
+    "pre_first_rmse": 4.467459712819918,
+    "between_rmse": 3.9057477380509096,
+    "post_last_rmse": 2.144615418347653,
+    "p95": 6.380626989679576,
+    "max": 10.440641952815184,
+    "wells_ge_40": 0,
+    "wells_ge_60": 0,
+    "worst10_sse_share": 0.3824459296533365
+  },
+  "acausal_bootstrap_robust_reference": {
+    "policy": "near_terminal",
+    "k": 6,
+    "pooled_rmse": 3.4321340164984333,
+    "non_anchor_rmse": 3.434239319349127,
+    "bootstrap_candidate_rmse_q975": 3.5487000072567025
+  },
+  "endpoint_inclusive": {
+    "minimum_passing_k": 6,
+    "k5_pooled_rmse": 4.152187776429633,
+    "k6_pooled_rmse": 3.5672972358229957
+  },
+  "causal": {
+    "minimum_passing_k_through_8": null,
+    "best_policy": "uniform",
+    "best_k": 8,
+    "pooled_rmse": 5.485900468988887,
+    "non_anchor_rmse": 5.490388648860866
+  },
+  "conditional_pareto_verdict": "no improvement; do not expand",
+  "next_recommended_experiment": {
+    "name": "locked-placement measurement-noise robustness",
+    "sigma_ft": [0.25, 0.5, 1.0, 2.0],
+    "placements": [
+      "near_terminal_k5",
+      "near_terminal_k6",
+      "endpoint_inclusive_k6"
+    ]
+  },
+  "test_status": "129 passed in 66.72s",
+  "deployable": false,
+  "submission_eligible": false,
+  "counterfactual_information_experiment": true,
+  "uses_validation_target_as_revealed_anchor": true,
+  "kaggle_submission_created": false,
+  "kaggle_submission_uploaded": false,
+  "artifact_root": ".runs/sparse-anchor-terminal-frontier-full"
+}

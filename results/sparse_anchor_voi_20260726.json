@@ -1,0 +1,45 @@
+{
+  "date": "2026-07-26",
+  "fold_version": "priority1_5fold_v1",
+  "fold_sha256": "7F1772817A95277696EB32085DA7618E2671E3ECE49F0DB00FFE1BC03C07C72E",
+  "wells": 773,
+  "rows": 3783989,
+  "tested_k": [1, 2, 4, 8],
+  "first_tested_k_below_4": 8,
+  "best": {
+    "policy": "uniform",
+    "method": "conditional_path_pca_mvp",
+    "k": 8,
+    "pooled_rmse": 3.004626163022902,
+    "non_anchor_rmse": 3.0070843378920835,
+    "bootstrap_candidate_rmse_q025": 2.8701471378127983,
+    "bootstrap_candidate_rmse_q50": 3.003376109840065,
+    "bootstrap_candidate_rmse_q975": 3.143583226055987,
+    "p50": 2.2390906297350868,
+    "p90": 4.283552514069583,
+    "p95": 5.094947336934646,
+    "max": 9.666047931339678,
+    "wells_ge_40": 0,
+    "wells_ge_60": 0,
+    "worst10_sse_share": 0.43898210891443623,
+    "post_last_anchor_rmse": 6.20153577649721
+  },
+  "uniform_piecewise_curve": {
+    "1": 9.561495328365202,
+    "2": 7.607473101437853,
+    "4": 5.275978633992852,
+    "8": 3.0788527685214415
+  },
+  "disagreement_k8": {
+    "piecewise_residual": 4.815486422046429,
+    "conditional_path_pca_mvp": 4.791693044537309
+  },
+  "deployable": false,
+  "submission_eligible": false,
+  "counterfactual_information_experiment": true,
+  "uses_validation_target_as_revealed_anchor": true,
+  "kaggle_submission_created": false,
+  "kaggle_submission_uploaded": false,
+  "test_status": "116 passed in 62.57s",
+  "artifact_root": ".runs/sparse-anchor-voi-full"
+}
