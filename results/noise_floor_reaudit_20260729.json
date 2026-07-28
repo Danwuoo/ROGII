@@ -1,0 +1,125 @@
+{
+  "calculations": {
+    "a_mean": 6.6845,
+    "a_range": 0.08499999999999996,
+    "a_sample_sd": 0.03668332954717531,
+    "b_mean": 7.25,
+    "b_range": 0.06299999999999972,
+    "b_sample_sd": 0.02687005768508871,
+    "comparisons": [
+      {
+        "clears_two_se": false,
+        "comparison": "branch hedge 0.00 vs 0.60",
+        "difference_ft": 0.061,
+        "standard_error_exact": 0.04136725758374611,
+        "standard_error_notebook_rounded": 0.041,
+        "z_exact": 1.474596179756618,
+        "z_notebook_rounded": 1.5
+      },
+      {
+        "clears_two_se": false,
+        "comparison": "branch hedge 0.60 vs 1.40",
+        "difference_ft": 0.009,
+        "standard_error_exact": 0.04136725758374611,
+        "standard_error_notebook_rounded": 0.041,
+        "z_exact": 0.21756337078376328,
+        "z_notebook_rounded": 0.2
+      },
+      {
+        "clears_two_se": false,
+        "comparison": "GR likelihood width 1.3 vs 1.5",
+        "difference_ft": 0.036,
+        "standard_error_exact": 0.05232590180780452,
+        "standard_error_notebook_rounded": 0.052,
+        "z_exact": 0.6879957871004245,
+        "z_notebook_rounded": 0.7
+      },
+      {
+        "clears_two_se": true,
+        "comparison": "branch hedge 1.40 vs 2.40",
+        "difference_ft": 0.125,
+        "standard_error_exact": 0.05232590180780452,
+        "standard_error_notebook_rounded": 0.052,
+        "z_exact": 2.388874260765363,
+        "z_notebook_rounded": 2.4
+      },
+      {
+        "clears_two_se": true,
+        "comparison": "branch hedge 0.00 vs 2.40",
+        "difference_ft": 0.194,
+        "standard_error_exact": 0.05232590180780452,
+        "standard_error_notebook_rounded": 0.052,
+        "z_exact": 3.707532852707844,
+        "z_notebook_rounded": 3.7
+      },
+      {
+        "clears_two_se": true,
+        "comparison": "GR likelihood width 1.0 vs 1.3",
+        "difference_ft": 0.176,
+        "standard_error_exact": 0.04136725758374611,
+        "standard_error_notebook_rounded": 0.041,
+        "z_exact": 4.254572584215816,
+        "z_notebook_rounded": 4.3
+      }
+    ],
+    "expected_two_draw_range_at_sigma_0.037": 0.04175002918253397,
+    "f_critical_one_sided_95_df3_df3": 9.2766281531448,
+    "f_critical_two_sided_upper_975_df3_df3": 15.439182378747283,
+    "standard_errors": {
+      "single_vs_four_mean": 0.04136725758374611,
+      "single_vs_single": 0.05232590180780452
+    },
+    "variance_ratio": 1.8638042474607686
+  },
+  "checks": {
+    "a_range_rounds_to_0.085": true,
+    "a_sample_sd_rounds_to_0.037": true,
+    "b_range_rounds_to_0.063": true,
+    "b_sample_sd_rounds_to_0.027": true,
+    "comparison_table_matches_recomputation": true,
+    "comparison_z_rounding_matches_notebook": true,
+    "expected_two_draw_range_rounds_to_0.042": true,
+    "one_sided_f_critical_rounds_to_9.3": true,
+    "rerun_arrays_match_notebook": true,
+    "single_vs_four_mean_se_rounds_to_0.041": true,
+    "single_vs_single_se_rounds_to_0.052": true,
+    "variance_ratio_below_one_sided_critical": true,
+    "variance_ratio_rounds_to_1.86": true
+  },
+  "interpretation": {
+    "f_test_note": "The notebook's 9.3 threshold is the one-sided 95% F(3,3) critical value. The two-sided 5% upper critical value is also reported; either threshold leaves the qualitative conclusion unchanged.",
+    "not_supported": "The notebook noise estimate is not an OOF confidence interval and does not establish hidden-test domain stability.",
+    "supported": "A and B are consistent with a rerun standard deviation of order 0.03 ft; single-score differences near this scale are not reliable."
+  },
+  "notebook": "C:\\Users\\wurre\\Desktop\\ROGII\\results\\measure-your-noise-floor-before-believing-a-lever.ipynb",
+  "notebook_sha256": "32e5ea6fb567d6ac6d8aaa90930f168d41cfea1971b3b45c0fc35fd83c2a24d2",
+  "passed": true,
+  "reruns": {
+    "A": [
+      6.7,
+      6.726,
+      6.641,
+      6.671
+    ],
+    "B": [
+      7.219,
+      7.24,
+      7.259,
+      7.282
+    ],
+    "CC": [
+      7.216,
+      7.305
+    ],
+    "DD": [
+      7.246,
+      7.28
+    ],
+    "EE": [
+      7.535,
+      7.647
+    ]
+  },
+  "schema_version": "rogii_noise_floor_reaudit_v1",
+  "scope": "Independent recomputation of the unchanged-rerun measurement, F comparison, standard errors, and z values in notebook cells 1-5. The train-label oracle sections were not executed or used as model evidence."
+}

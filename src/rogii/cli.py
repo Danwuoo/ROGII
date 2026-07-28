@@ -52,6 +52,11 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--max-validation-wells", type=int)
     run.add_argument("--seed", type=int, default=20260711)
     run.add_argument("--workers", type=int, default=4)
+    run.add_argument(
+        "--cache-root",
+        type=Path,
+        help="optional shared inference-safe feature cache outside the run directory",
+    )
 
     record = commands.add_parser("record", help="record only a small run summary")
     record.add_argument("--run", type=Path, required=True)
@@ -116,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
             max_validation_wells=args.max_validation_wells,
             seed=args.seed,
             workers=args.workers,
+            cache_root=args.cache_root,
         )
         result = {**result, "run_root": str(result["run_root"])}
     elif args.command == "record":

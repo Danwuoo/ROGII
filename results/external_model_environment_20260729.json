@@ -1,0 +1,19 @@
+{
+  "captured_utc": "2026-07-28T23:05:45.5433966Z",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10",
+  "python_build": "tags/v3.12.10:0cc8128, Apr 8 2025, 12:21:36; MSC v.1943 64 bit (AMD64)",
+  "packages": {
+    "numpy": "2.4.3",
+    "pandas": "3.0.1",
+    "scipy": "1.17.1",
+    "torch": "2.12.1+cpu"
+  },
+  "device": "CPU",
+  "external_pretrained_weights_used": [],
+  "notes": [
+    "The executed environment is recorded exactly for audit.",
+    "pyproject.toml constrains SciPy by a lower bound rather than an exact lock, so cross-environment fresh reruns may use a different SLSQP implementation.",
+    "Persisted nested weights and predictions are byte-locked and independently re-audited; this environment record does not remove the fresh-rerun version risk."
+  ]
+}

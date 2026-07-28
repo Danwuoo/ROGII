@@ -45,11 +45,46 @@ def _atomic_npz(path: Path, **arrays: np.ndarray) -> None:
 class P3Model:
     model_id = "p3"
 
+    def cache_path(self, well: WellFiles, *, split: str, cache_root: Path) -> Path:
+        return Path(cache_root) / CACHE_VERSION / split / f"{well.well_id}.npz"
+
+    @staticmethod
+    def _load_cache(path: Path, *, well_id: str) -> InferenceWell | None:
+        """Load a validated cache entry, returning None on corruption/mismatch."""
+        if not path.is_file():
+            return None
+        expected_width = len(FEATURE_COLUMNS) + len(ALIGNMENT_FEATURE_COLUMNS)
+        try:
+            with np.load(path, allow_pickle=False) as cached:
+                row_index = cached["row_index"].astype(np.int64, copy=True)
+                anchor_values = cached["anchor"].astype(np.float64, copy=True)
+                features = cached["features"].astype(np.float32, copy=True)
+            valid = (
+                row_index.ndim == 1
+                and len(row_index) > 0
+                and np.all(np.diff(row_index) == 1)
+                and anchor_values.shape == (1,)
+                and np.isfinite(anchor_values).all()
+                and features.shape == (len(row_index), expected_width)
+                and not np.isinf(features).any()
+            )
+            if not valid:
+                return None
+            return InferenceWell(
+                well_id=well_id,
+                row_index=row_index,
+                anchor=float(anchor_values[0]),
+                features=features,
+            )
+        except (OSError, ValueError, KeyError, EOFError):
+            return None
+
     def prepare(
         self, well: WellFiles, *, split: str, cache_root: Path
     ) -> InferenceWell:
-        output = Path(cache_root) / CACHE_VERSION / split / f"{well.well_id}.npz"
-        if not output.is_file():
+        output = self.cache_path(well, split=split, cache_root=cache_root)
+        prepared = self._load_cache(output, well_id=well.well_id)
+        if prepared is None:
             horizontal = load_horizontal_inference(well.horizontal_path)
             typewell = load_typewell_inference(well.typewell_path)
             base = build_prediction_features(horizontal, typewell)
@@ -74,13 +109,10 @@ class P3Model:
                 row_index=base.row_index.astype(np.int64, copy=False),
                 anchor=np.asarray([base.anchor], dtype=np.float64),
             )
-        with np.load(output, allow_pickle=False) as cached:
-            return InferenceWell(
-                well_id=well.well_id,
-                row_index=cached["row_index"].copy(),
-                anchor=float(cached["anchor"][0]),
-                features=cached["features"].copy(),
-            )
+            prepared = self._load_cache(output, well_id=well.well_id)
+        if prepared is None:
+            raise ValueError(f"P3 cache validation failed after rebuild: {well.well_id}")
+        return prepared
 
     def fit(
         self, training_wells: Sequence[TrainingWell], *, context: RunContext

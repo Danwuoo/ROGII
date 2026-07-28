@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import pickle
 import re
+import time
 from typing import Any, Iterable
 
 import numpy as np
@@ -122,11 +123,22 @@ def _prepare_many(
     split: str,
     cache_root: Path,
     workers: int,
+    statistics: dict[str, Any] | None = None,
 ) -> dict[str, InferenceWell]:
     def prepare(well: WellFiles) -> InferenceWell:
         return model.prepare(well, split=split, cache_root=cache_root)
 
     prepared: dict[str, InferenceWell] = {}
+    cache_paths: list[Path | None] = []
+    cache_path_method = getattr(model, "cache_path", None)
+    for well in wells:
+        cache_paths.append(
+            Path(cache_path_method(well, split=split, cache_root=cache_root))
+            if callable(cache_path_method)
+            else None
+        )
+    hits_before = sum(path is not None and path.is_file() for path in cache_paths)
+    started = time.perf_counter()
     with threadpool_limits(limits=1):
         with ThreadPoolExecutor(
             max_workers=workers, thread_name_prefix=f"rogii-{split}"
@@ -139,6 +151,22 @@ def _prepare_many(
                         f"wells={count}/{len(wells)}",
                         flush=True,
                     )
+    if statistics is not None:
+        statistics.update(
+            {
+                "split": split,
+                "wells": len(wells),
+                "cache_observable": callable(cache_path_method),
+                "cache_hits_before_prepare": int(hits_before),
+                "cache_misses_before_prepare": int(len(wells) - hits_before)
+                if callable(cache_path_method)
+                else None,
+                "cache_entries_after_prepare": int(
+                    sum(path is not None and path.is_file() for path in cache_paths)
+                ),
+                "elapsed_seconds": float(time.perf_counter() - started),
+            }
+        )
     return prepared
 
 
@@ -155,6 +183,7 @@ def run_experiment(
     max_validation_wells: int | None = None,
     seed: int = DEFAULT_SEED,
     workers: int = 4,
+    cache_root: Path | None = None,
 ) -> dict[str, Any]:
     if model_id not in MODEL_IDS:
         raise ValueError(f"model_id must be one of {MODEL_IDS}")
@@ -181,7 +210,11 @@ def run_experiment(
         + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     )
     run_root = _safe_run_root(output_root, identifier, data)
-    cache_root = run_root / "cache"
+    selected_cache_root = (
+        Path(cache_root).resolve() if cache_root is not None else run_root / "cache"
+    )
+    if selected_cache_root == data or data in selected_cache_root.parents:
+        raise ValueError("Feature cache cannot be inside competition data")
     model_root = run_root / "models"
     model_root.mkdir()
 
@@ -208,12 +241,14 @@ def run_experiment(
         required_ids.update(validation_ids)
 
     required_files = [train_by_id[well_id] for well_id in sorted(required_ids)]
+    prepare_statistics: dict[str, Any] = {}
     prepared = _prepare_many(
         model,
         required_files,
         split="train",
-        cache_root=cache_root,
+        cache_root=selected_cache_root,
         workers=workers,
+        statistics=prepare_statistics,
     )
     targets = {
         well_id: _load_target(train_by_id[well_id], prepared[well_id].row_index)
@@ -222,6 +257,7 @@ def run_experiment(
 
     oof_blocks: list[pd.DataFrame] = []
     fold_manifest: dict[str, Any] = {}
+    fold_timings: dict[str, Any] = {}
     for fold in requested_folds:
         training_ids, validation_ids = selected[fold]
         training = [
@@ -239,7 +275,10 @@ def run_experiment(
             f"validation_wells={len(validation_ids)}",
             flush=True,
         )
+        fold_started = time.perf_counter()
+        fit_started = time.perf_counter()
         state = model.fit(training, context=context)
+        fit_elapsed = time.perf_counter() - fit_started
         state_path = model_root / f"fold_{fold}.pkl"
         temporary = state_path.with_suffix(".tmp")
         with temporary.open("wb") as handle:
@@ -271,6 +310,10 @@ def run_experiment(
             "pooled_row_rmse": pooled_row_rmse(
                 fold_frame["y_true"], fold_frame["y_pred"]
             ),
+        }
+        fold_timings[str(fold)] = {
+            "fit_seconds": float(fit_elapsed),
+            "total_seconds": float(time.perf_counter() - fold_started),
         }
         del state, training, validation_blocks, fold_frame
         gc.collect()
@@ -338,6 +381,7 @@ def run_experiment(
         "max_validation_wells": validation_limit,
         "seed": seed,
         "workers": workers,
+        "cache_root": str(selected_cache_root),
         "fold_manifest": fold_manifest,
     }
     oof.sort_values(["fold", "well_id", "row_index"], kind="stable").to_csv(
@@ -349,6 +393,14 @@ def run_experiment(
     per_fold.to_csv(run_root / "per_fold_metrics.csv", index=False, lineterminator="\n")
     _write_json(run_root / "summary.json", summary)
     _write_json(run_root / "run_config.json", config)
+    _write_json(
+        run_root / "timings.json",
+        {
+            "prepare": prepare_statistics,
+            "folds": fold_timings,
+            "cache_root": str(selected_cache_root),
+        },
+    )
     return {"run_root": run_root, "summary": summary}
 
 
@@ -371,11 +423,14 @@ def submit_run(
         raise ValueError("Submission output cannot be inside competition data")
     configure_cpu(workers=workers)
     test_files = list(enumerate_wells(data, "test"))
+    configured_cache = Path(config.get("cache_root", root / "cache")).resolve()
+    if configured_cache == data or data in configured_cache.parents:
+        raise ValueError("Feature cache cannot be inside competition data")
     prepared = _prepare_many(
         model,
         test_files,
         split="test",
-        cache_root=root / "cache",
+        cache_root=configured_cache,
         workers=workers,
     )
     states = []
