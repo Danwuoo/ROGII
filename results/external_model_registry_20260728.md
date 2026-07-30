@@ -413,3 +413,76 @@ head、adapter、learned representation 均只能 fit outer-training wells。
 
 目前最安全的執行結論仍是：先用已完成的四個 architecture-only family 做 matched
 quick experiments；在它們證明 slope/shape signal 前，不下載 foundation weights。
+
+## 13. 2026-07-29 Kaggle external-TVT addendum
+
+新增來源：
+
+- notebook:
+  <https://www.kaggle.com/code/evgendvorkin/roggi-physics-lb-7-872-v48/notebook>
+- prediction dataset:
+  <https://www.kaggle.com/datasets/nina2025/rogii-03>
+- 完整稽核：`results/kaggle_external_tvt_audit_20260729.md`
+
+| Source | Classification | License／provenance | Eligibility |
+|---|---|---|---|
+| `nina2025/rogii-03` version 5 | 8 份 14,151-row competition-test `id,tvt` predictions；不是 train OOF 或外部 labels | Kaggle 顯示 license `Unknown`、無描述、provenance 空白 | **Ineligible** for targets、weight fit、routing 或 promotion evidence；只保留 target-free diversity diagnostic |
+| `evgendvorkin/roggi-physics-lb-7-872-v48` rendered successful V68/70 | physics／PF／ML notebook；code Apache-2.0 | input datasets/models 的 license 與 provenance 不由 notebook license 涵蓋 | Final LB path **ineligible**：使用同井 train `TVT`、formation surfaces、typewell `Geology` 覆寫 14,151/14,151 test rows，並含 public-LB-driven 單井 shift |
+| PF／beam architecture subset | horizontal `MD,Z,GR,TVT_input`＋typewell `TVT,GR` 的 sequential alignment idea | 可從 Apache-2.0 notebook architecture/code 重新實作；不可繼承未知 model/data artifacts | **Candidate architecture-only route**；必須移除 contact/formation/target overlap，重新做 strict OOF |
+
+八份 predictions 與 Heel-Registered visible-test prediction 的 within-well
+centered correlation 為 0.779749–0.841790，顯示可能有 slope／shape diversity；
+但八份彼此的 centered correlation 高達 0.966394–0.998515，應視為同一相關家族。
+沒有 train strict OOF 與合法 provenance 時，不能根據檔名中的 public-LB 分數學
+blend weights，也不能把 test-only pseudo-label 蒸餾結果當成 validated transfer。
+
+## 14. 2026-07-29 Granite TTM R2 transfer-probe addendum
+
+Audited implementation and result:
+
+- runbook: `results/ttm_pretrained_transfer_probe_runbook_20260729.md`
+- quick report: `results/ttm_pretrained_transfer_probe_quick_20260729.md`
+- model: `ibm-granite/granite-timeseries-ttm-r2`
+- package: `granite-tsfm==0.3.6`
+- paper: [Tiny Time Mixers, NeurIPS 2024](https://proceedings.neurips.cc/paper_files/paper/2024/hash/874a4d89f2d04b4bcf9a2c19545cf040-Abstract-Conference.html)
+- repository commit:
+  `31c7a6bd640c41e53777c0afe3a13d24e00f7fe7`
+- weight revision:
+  `d6a79570cac0f33d526601cd3a0fc7c80a8f9a2f`
+- weight SHA-256:
+  `a706726a7eb01bbcb42994b7dcb3c06ea9557898dbae8d480eb04fe8ccb89710`
+- license: Apache-2.0
+
+### Provenance classification
+
+| Claim | Classification | Evidence / limit |
+|---|---|---|
+| R2 disclosed sources | **Confirmed** | Official model card names Australian Electricity Demand/Weather, Bitcoin, KDD Cup 2018, London Smart Meters, Saugeen River Flow, Solar/Sunspots, US Births, and Wind datasets; approximately 700M samples |
+| Well log, GR, geology, or ROGII exposure | **Not disclosed / not listed** | None is named in the disclosed r2 list, but no exhaustive row-level corpus manifest or overlap certificate is published |
+| Direct geology overlap is unlikely | **Inference** | Domain/source names do not indicate geology; this is not absence proof |
+| License | **Confirmed** | Repository/model card state Apache-2.0; this does not independently certify every upstream dataset license |
+| Embedding extraction | **Confirmed by package inspection** | `TinyTimeMixerForPrediction.backbone(...).last_hidden_state`, `[B,1,8,192]`; forecast output is unused |
+| Normalization | **Confirmed by config/package inspection** | checkpoint `scaling="std"` invokes mask-aware per-instance/channel standard scaling; the project head adds an outer-training-only embedding/bypass scaler |
+| Matched random initialization | **Confirmed by package API/test** | exact loaded config passed to the official model constructor with fixed seed; same 805,280-parameter architecture |
+| Offline execution | **Confirmed by forced-offline smoke** | local-only loading plus DNS/socket guard; cached reload passed |
+
+Only the four checkpoint/model-card files were downloaded. No pretraining
+dataset, MOMENT Pile, GiftEvalPretrain, artifact over 5 GB, paid cloud job, or
+Kaggle submission was used.
+
+### Empirical status
+
+Canonical 100-well, three-seed quick:
+
+- random-frozen RMSE: `13.9618936941`
+- pretrained-frozen RMSE: `14.2627649676`
+- pretrained − random: `+0.3008712735` ft
+- paired 95% CI: `[-0.3673589250, +0.9560855459]`
+- directionally favorable folds: `1/5`
+- pretrained − matched quick incumbent: `+1.4510181142` ft
+
+Wrong-typewell, GR-order shuffle, and phase-destroy controls all outperform
+correct pretrained pairing. The locked gate therefore failed with decision
+`stop_ttm_no_full_no_adapter_no_retune`. Status is **negative transfer result;
+route stopped**. Full, adapter, scratch-full, nested ensemble, and submission
+are prohibited for this protocol.

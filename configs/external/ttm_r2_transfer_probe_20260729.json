@@ -1,0 +1,107 @@
+{
+  "schema_version": "ttm_r2_transfer_probe_locked_v1",
+  "identity": {
+    "repository": "https://github.com/ibm-granite/granite-tsfm",
+    "repository_commit": "31c7a6bd640c41e53777c0afe3a13d24e00f7fe7",
+    "package": "granite-tsfm==0.3.6",
+    "license": "Apache-2.0",
+    "model_id": "ibm-granite/granite-timeseries-ttm-r2",
+    "weight_revision": "d6a79570cac0f33d526601cd3a0fc7c80a8f9a2f",
+    "weight_file": "model.safetensors",
+    "weight_bytes": 3240592,
+    "weight_sha256": "a706726a7eb01bbcb42994b7dcb3c06ea9557898dbae8d480eb04fe8ccb89710"
+  },
+  "architecture": {
+    "context_length": 512,
+    "prediction_length": 96,
+    "patch_length": 64,
+    "patch_stride": 64,
+    "patch_count": 8,
+    "d_model": 192,
+    "num_layers": 2,
+    "adaptive_patching_levels": 3,
+    "backbone_output": "TinyTimeMixerForPrediction.backbone.last_hidden_state",
+    "forecast_output_used": false,
+    "random_backbone_seed": 2026072901,
+    "head_hidden_dim": 32,
+    "adapter_rank": 8,
+    "adapter_enabled_by_default": false
+  },
+  "data_contract": {
+    "grid_points": 512,
+    "horizontal_columns": [
+      "MD",
+      "X",
+      "Y",
+      "Z",
+      "GR",
+      "TVT_input"
+    ],
+    "typewell_columns": [
+      "TVT",
+      "GR"
+    ],
+    "retained_dct_modes": 16,
+    "maximum_absolute_correction": 80.0,
+    "pooled_row_rmse_primary": true,
+    "well_level_outer_folds": 5
+  },
+  "optimization": {
+    "quick_seeds": [
+      20260729,
+      20260730,
+      20260731
+    ],
+    "full_seeds": [
+      20260711,
+      20260712,
+      20260713,
+      20260714,
+      20260715
+    ],
+    "quick_epochs": 30,
+    "full_epochs": 60,
+    "batch_size": 16,
+    "embedding_batch_size": 32,
+    "learning_rate": 0.003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 5.0,
+    "hyperparameter_search": false
+  },
+  "quick_variants": [
+    "ttm_random_frozen",
+    "ttm_pretrained_frozen",
+    "ttm_pretrained_wrong_typewell",
+    "ttm_pretrained_pair_shuffle",
+    "ttm_pretrained_gr_order_shuffle",
+    "ttm_pretrained_phase_destroy"
+  ],
+  "full_default_variants": [
+    "ttm_random_frozen",
+    "ttm_pretrained_frozen"
+  ],
+  "primary_transfer_contrast": "ttm_pretrained_frozen - ttm_random_frozen",
+  "quick_gate": {
+    "minimum_transfer_improvement_ft": 0.05,
+    "bootstrap_probability_pretrained_better_minimum": 0.8,
+    "bootstrap_upper_95_below_zero_ideal": true,
+    "minimum_directionally_consistent_folds": 4,
+    "maximum_pretrained_delta_vs_incumbent_ft": 0.05,
+    "minimum_slope_or_shape_improvement_ft": 0.02,
+    "maximum_p95_degradation_ft": 1.0,
+    "maximum_max_well_degradation_ft": 3.0,
+    "maximum_catastrophic_count_increase": 1,
+    "maximum_worst_10pct_sse_share_increase": 0.02,
+    "minimum_removed_transfer_gain_fraction": 0.5,
+    "safety_checks_required": true,
+    "all_conditions_required": true
+  },
+  "prohibitions": {
+    "full_requires_explicit_profile": true,
+    "adapter_not_run_in_this_round": true,
+    "scratch_full_by_default": false,
+    "rogii03_used": false,
+    "submission_created": false,
+    "submission_uploaded": false
+  }
+}

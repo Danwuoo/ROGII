@@ -1,0 +1,60 @@
+{
+  "schema_version": "prefix_calibrated_inverse_probe_v1",
+  "locked_before_stage0": true,
+  "scientific_hypothesis": "inference-time TVT_input prefix identifies assigned-typewell GR correspondence strongly enough to support a calibrated observation likelihood",
+  "profiles": {
+    "smoke_wells_per_fold": 1,
+    "quick_stage0_wells": "all_773_training_wells",
+    "full_requires_explicit_profile": true
+  },
+  "prefix_calibration": {
+    "resample_step_ft": 1.0,
+    "maximum_resampled_points": 2048,
+    "minimum_prefix_pairs": 48,
+    "minimum_evaluation_pairs": 20,
+    "lag_values_ft": [-8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0],
+    "stretch_values": [0.98, 1.0, 1.02],
+    "smoothing_scales_ft": [5.0, 15.0],
+    "calibration_block_ft": 20.0,
+    "student_t_df": 4.0,
+    "raw_weight": 0.3,
+    "smooth_weight": 0.3,
+    "derivative_weight": 0.18,
+    "contrast_weight": 0.14,
+    "polarity_weight": 0.08,
+    "amplitude_scale_min": 0.25,
+    "amplitude_scale_max": 4.0,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260729,
+    "stage0_correct_win_fraction": 0.65
+  },
+  "stage0_gate": {
+    "correct_beats_wrong_well_fraction_min": 0.65,
+    "correct_minus_wrong_bootstrap_ci_upper_lt": 0.0,
+    "correct_minus_phase_bootstrap_ci_upper_lt": 0.0,
+    "correct_minus_shuffle_bootstrap_ci_upper_lt": 0.0,
+    "residualized_nuisance_ci_upper_lt": 0.0,
+    "nuisance_only_correct_preference_max": 0.65
+  },
+  "quick_gate": {
+    "candidate_minus_incumbent_max_ft": -1.5,
+    "candidate_rmse_max_ft": 11.3117468534,
+    "paired_bootstrap_ci_upper_lt": 0.0,
+    "improved_folds_min": 4,
+    "per_well_wins_min": 60,
+    "residual_components_improved_min": 2,
+    "terminal_anchor_not_worse": true,
+    "p95_worsening_max_ft": 0.5,
+    "max_well_rmse_worsening_max_ft": 3.0,
+    "catastrophic_counts_must_not_increase": true,
+    "correct_beats_each_control_min_ft": 0.5,
+    "phase_and_shuffle_remove_gain_fraction_min": 0.5
+  },
+  "forbidden": {
+    "horizontal_columns": ["TVT", "ANCC", "ASTNU", "ASTNL", "EGFDU", "EGFDL", "BUDA"],
+    "typewell_columns": ["Geology"],
+    "images": true,
+    "rogii03_predictions": true,
+    "submission": true
+  }
+}

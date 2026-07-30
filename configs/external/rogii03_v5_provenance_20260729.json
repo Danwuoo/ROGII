@@ -1,0 +1,196 @@
+{
+  "schema_version": "rogii_external_provenance_v1",
+  "registry_id": "nina2025_rogii03_v5_20260729",
+  "dataset": {
+    "url": "https://www.kaggle.com/datasets/nina2025/rogii-03",
+    "owner": "nina2025",
+    "title": "ROGII - 03",
+    "version": 5,
+    "date_modified_utc": "2026-06-02T10:04:42.297Z",
+    "license": "Unknown",
+    "description": "No description available",
+    "rows_per_file": 14151,
+    "columns": [
+      "id",
+      "tvt"
+    ],
+    "eligibility": "diagnostic_only"
+  },
+  "version_lineage": [
+    {
+      "version": 1,
+      "change": "initial release",
+      "files_added": [
+        "10.142.csv",
+        "11.284.csv",
+        "11.338.csv"
+      ],
+      "evidence": "direct Kaggle version page"
+    },
+    {
+      "version": 2,
+      "date": "2026-05-11",
+      "files_added": [
+        "9.956.csv"
+      ],
+      "evidence": "direct difference of Kaggle version 1 and 2 file trees"
+    },
+    {
+      "version": 3,
+      "date": "2026-05-13",
+      "files_added": [
+        "9.537.csv",
+        "9.765.csv"
+      ],
+      "evidence": "direct difference of Kaggle version 2 and 3 file trees"
+    },
+    {
+      "version": 4,
+      "date": "2026-05-15",
+      "files_added": [
+        "9.571.csv"
+      ],
+      "evidence": "direct difference of Kaggle version 3 and 4 file trees"
+    },
+    {
+      "version": 5,
+      "date": "2026-06-02",
+      "files_added": [
+        "9.349.csv"
+      ],
+      "evidence": "direct difference of Kaggle version 4 and 5 file trees"
+    }
+  ],
+  "files": [
+    {
+      "name": "10.142.csv",
+      "sha256": "f7963037b2871b4d040bd6e60ef4b5b69143189235e4f7609cabed11a09bdc6f",
+      "bytes": 464140,
+      "version_added": 1,
+      "attributed_source_url": "https://www.kaggle.com/code/romantamrazov/rogii-super-solution-lb-top-3?scriptVersionId=317517099",
+      "attributed_script_version_id": 317517099,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table and embedded source section",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "11.284.csv",
+      "sha256": "d2301bcb686ef7ab2be972b7e6ad668760ad161b2ae0cf5243d8b66685a4daad",
+      "bytes": 424186,
+      "version_added": 1,
+      "attributed_source_url": "https://www.kaggle.com/code/shinyanagai123/triple-signal-beam-search-dual-pf-lightgbm?scriptVersionId=317309694",
+      "attributed_script_version_id": 317309694,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table and embedded source section",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "11.338.csv",
+      "sha256": "0a4795ab063f0430afe05980b7726a90843d168522c6a7d8ba003a6a42ae92a8",
+      "bytes": 463115,
+      "version_added": 1,
+      "attributed_source_url": "https://www.kaggle.com/code/pilkwang/rogii-eda-leakageriskdiscussion-v2?scriptVersionId=317591796",
+      "attributed_script_version_id": 317591796,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table and embedded source section",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "9.349.csv",
+      "sha256": "99c20ec9cab0df9446953296a2e9cd08f462dce88e4e3b53fdc30ff51d4b8ddb",
+      "bytes": 426502,
+      "version_added": 5,
+      "attributed_source_url": null,
+      "attributed_script_version_id": null,
+      "attribution_evidence": "none found; absent from both downloaded Nina h-blend sources and the downloaded Evgen source",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "9.537.csv",
+      "sha256": "3bb5e16cb0162c8a9f6c5be084cfc307e845b0691c5578cc5c1ace14c1b7538f",
+      "bytes": 426376,
+      "version_added": 3,
+      "attributed_source_url": "https://www.kaggle.com/code/thbdh5765/rogii-v10-fresh-artifact-infer?scriptVersionId=318564530",
+      "attributed_script_version_id": 318564530,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table, embedded code, and output preview matching the dataset values at displayed precision",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false,
+      "known_exclusion": "embedded source reports exact train-coordinate TVT blend on 14151/14151 test rows"
+    },
+    {
+      "name": "9.571.csv",
+      "sha256": "3db4e46ad037fa5981117cbf2189cdf8e55fafec5dc67babfd174970c8a55dfc",
+      "bytes": 338478,
+      "version_added": 4,
+      "attributed_source_url": "https://www.kaggle.com/code/svanikkolli/aeroridge-engine-v2?scriptVersionId=318498402",
+      "attributed_script_version_id": 318498402,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table and embedded source section",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "9.765.csv",
+      "sha256": "35436771bc1cb180bb859a01bdb7018e948f57a31750e98f3caaa4db42d39daf",
+      "bytes": 464132,
+      "version_added": 3,
+      "attributed_source_url": "https://www.kaggle.com/code/markjcooper/imitation-tasmim-lgb-xgb?scriptVersionId=318708494",
+      "attributed_script_version_id": 318708494,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table, embedded code, and output preview matching the dataset values at displayed precision",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    },
+    {
+      "name": "9.956.csv",
+      "sha256": "da8fb54ee3dee151742a60e9954a7673fca2140bd88e0c1ed5825016397ea99c",
+      "bytes": 464186,
+      "version_added": 2,
+      "attributed_source_url": "https://www.kaggle.com/code/romantamrazov/rogii-better-solution-lb-9-956?scriptVersionId=318051097",
+      "attributed_script_version_id": 318051097,
+      "attribution_evidence": "Nina h-blend v1 and v2 source table, embedded code, and output preview matching the dataset values at displayed precision",
+      "exact_content_lineage_proven": false,
+      "input_compliance_proven": false
+    }
+  ],
+  "downloaded_notebooks": [
+    {
+      "url": "https://www.kaggle.com/code/nina2025/rogii-h-blend-v1",
+      "version": 4,
+      "sha256": "0352c6bb7edc8806f41a2973d23be206ca9f4303811fa247d5ea0605c370a527",
+      "license": "Apache-2.0"
+    },
+    {
+      "url": "https://www.kaggle.com/code/nina2025/rogii-h-blend-v2",
+      "version": 5,
+      "sha256": "204bc2990e6d1230efcc380552424e873026c906163600e0999ab09f93fcf5d4",
+      "license": "Apache-2.0"
+    },
+    {
+      "url": "https://www.kaggle.com/code/evgendvorkin/roggi-physics-lb-7-872-v48",
+      "version": 72,
+      "sha256": "67c7b924d6e86bd3fdf7cfe3e775e033dd2fe9f70a0f39092c3533a10c30e103",
+      "license": "Apache-2.0",
+      "relationship_to_rogii03": "ROGII-03 is an attached input, but the source contains none of the eight filenames; the displayed first rows of its current submission.csv match none of the eight files"
+    }
+  ],
+  "availability": {
+    "train_predictions": false,
+    "strict_well_level_oof": false,
+    "fold_definitions": false,
+    "exact_reconstructable_checkpoints": false,
+    "allowed_input_manifest": false,
+    "public_lb_tuning_excluded": false,
+    "same_well_overlap_excluded": false
+  },
+  "allowed_uses": [
+    "target-free prediction geometry",
+    "provenance research"
+  ],
+  "forbidden_uses": [
+    "teacher fitting",
+    "OOF scoring",
+    "blend-weight fitting",
+    "production ensemble",
+    "test-only pseudo-label distillation"
+  ]
+}

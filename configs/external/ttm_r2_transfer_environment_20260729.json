@@ -1,0 +1,33 @@
+{
+  "schema_version": "ttm_r2_transfer_environment_v1",
+  "captured_on": "2026-07-29",
+  "platform": "Windows 11",
+  "python": "3.12.10",
+  "environment": ".runs/ttm-r2-transfer-probe-20260729/.venv",
+  "system_site_packages": true,
+  "packages": {
+    "granite-tsfm": "0.3.6",
+    "transformers": "4.57.6",
+    "huggingface-hub": "0.36.2",
+    "safetensors": "0.8.0",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.4.3",
+    "pandas": "3.0.1",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.8.0"
+  },
+  "compatibility_note": {
+    "granite_tsfm_pypi_metadata": "scikit-learn<1.8",
+    "project_incumbent_artifact_version": "scikit-learn==1.8.0",
+    "resolution": "Use the isolated system-site-packages venv, remove its local scikit-learn 1.7.2, and expose/install scikit-learn 1.8.0. The TTM model path does not call scikit-learn.",
+    "verified": true,
+    "verification": "Online/offline smoke, incumbent exactness, canonical quick, independent disk audit, and the full repository test suite passed."
+  },
+  "cuda": {
+    "available_on_audit_host": false,
+    "torch_cuda_version": null,
+    "cpu_fallback_verified": true,
+    "cuda_code_path_present": true,
+    "cuda_smoke_performed": false
+  }
+}
