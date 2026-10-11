@@ -1,9 +1,33 @@
 # ROGII
 
-ROGII Wellbore Geology Prediction 的精簡研究與 Kaggle runtime。Active code
-只保留 Flat last-known 與 P3 physical-TVT alignment；舊路線留在
-[`results/history.md`](results/history.md) 與外部 legacy bundle，不再增加日常
-開發負擔。
+ROGII Wellbore Geology Prediction 的研究與 Kaggle runtime。建議先從 Flat
+last-known 與 P3 physical-TVT alignment 審閱；目前
+[`model registry`](src/rogii/models/__init__.py)還包含其他模型與診斷路線。
+舊路線的摘要留在 [`results/history.md`](results/history.md) 與外部 legacy bundle。
+
+## 教授閱讀入口與展示邊界
+
+此 clone 有可追查的模型來源、well-level validation 與歷史摘要，**未包含競賽
+`data/` 或 `.runs/` 的 OOF／models，因此目前不能獨立重算既有 full 分數**。
+完整五項評估、公開前問題與歸屬限制見
+[`Professor-facing Repository Audit`](PROFESSOR_AUDIT.md)。
+
+1. [`Flat`](src/rogii/models/flat.py)與 [`P3`](src/rogii/models/p3.py)：先理解
+   last-known baseline，再讀 physical alignment features 與 residual GBDT。
+2. [`Runner`](src/rogii/runner.py)、[`folds`](src/rogii/folds.py)和
+   [`submission alignment`](src/rogii/submission.py)：檢查 well 隔離、pooled
+   row-RMSE、test IDs 的 join 與排序。
+3. [`歷史 full 摘要`](results/recorded_runs.csv)及
+   [`P3 run record`](results/recorded/reset-p3-full.json)：記載 Flat/P3 分別為
+   `15.90985`／`15.45255`，773 wells、3,783,989 OOF rows。這是本機 CV 歷史
+   紀錄，並非新跑結果或 Kaggle 排名；也不足以單獨宣稱穩健優於 baseline。
+4. [`第三方 prediction provenance`](configs/external/rogii03_v5_provenance_20260729.json)：
+   部分外部產物來源／授權／輸入合規未證，已標 `diagnostic_only`，不能當作本人
+   方法的 OOF 或 production ensemble 證據。
+
+以下安裝與 CLI 命令已對照 [`pyproject.toml`](pyproject.toml)及
+[`CLI`](src/rogii/cli.py)查實（source checked），本次沒有安裝套件或執行 CV。
+安裝前需 Python 3.10 以上；目前 dependency ranges 不是完整環境 lock。
 
 ## 安裝
 
@@ -39,12 +63,19 @@ rogii submit --run .runs/p3-full --data-root $dataRoot --output submission.csv
 
 - `quick` 預設使用 fold 0，以 stable hash 選 100 個 training wells 與 20 個
   validation wells；結果會標記為不可與 full OOF 比較。
-- `full` 使用固定 5-fold 與全部 773 wells。
+- `full` 使用固定 5-fold 與全部 training wells；歷史 full record 為 773 wells。
 - `--folds`、`--max-train-wells`、`--max-validation-wells`、`--seed` 與
   `--workers` 都可直接覆寫，不需要 protocol receipt。
 - `.runs/` 保存 cache、fold models、OOF 與 diagnostics，但不進 Git。
 - `rogii record` 只把小型 JSON/CSV 摘要寫入 `results/`。
 - `rogii submit` 只產生本機 CSV，不會上傳 Kaggle。
+
+重現前應先自行依競賽存取條件取得資料，再執行 `rogii check`。建議先跑
+`quick` 核查流程；完整歷史分數需另用相同 folds、seed、model configuration
+與相容環境重跑 `full`，不能由小型摘要還原 OOF predictions。範例 run ID
+若已存在，請換新 ID；[`Runner`](src/rogii/runner.py)會拒絕覆寫既有 run。
+額外 sequence／external 路線的環境依賴需另讀各自 runbook，不把基本安裝視為
+所有研究路線的完整環境。
 
 `rogii slp-e0` 是獨立的 representation diagnostic，會讀取全部 training
 target `TVT` 與 training-only formation surfaces，量測 polynomial、
