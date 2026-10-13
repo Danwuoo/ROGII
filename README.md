@@ -1,41 +1,39 @@
 # ROGII
 
-ROGII Wellbore Geology Prediction 的研究與 Kaggle runtime。建議先從 Flat
-last-known 與 P3 physical-TVT alignment 審閱；目前
-[`model registry`](src/rogii/models/__init__.py)還包含其他模型與診斷路線。
-舊路線的摘要留在 [`results/history.md`](results/history.md) 與外部 legacy bundle。
+ROGII 是 Wellbore Geology Prediction 的研究與 Kaggle runtime，重點是井級資料隔離、inference-safe features、模型比較與 submission ID 對齊。主要閱讀路線從 last-known baseline 開始，再進入 physical-TVT alignment 與 residual GBDT；[model registry](src/rogii/models/__init__.py) 另保留其他模型和診斷路線。
 
-## 教授閱讀入口與展示邊界
+## 原碼閱讀路線
 
-此 clone 有可追查的模型來源、well-level validation 與歷史摘要，**未包含競賽
-`data/` 或 `.runs/` 的 OOF／models，因此目前不能獨立重算既有 full 分數**。
-完整五項評估、公開前問題與歸屬限制見
-[`Professor-facing Repository Audit`](PROFESSOR_AUDIT.md)。
+| 順序 | 入口 | 內容 |
+| --- | --- | --- |
+| 1 | [Model protocol](src/rogii/models/base.py)、[Flat](src/rogii/models/flat.py) | `prepare`／`fit`／`predict` 與 last-known anchor baseline。 |
+| 2 | [P3](src/rogii/models/p3.py)、[Alignment](src/rogii/alignment.py) | Physical alignment features、training-well residual fitting 與 TVT prediction。 |
+| 3 | [Runner](src/rogii/runner.py)、[Folds](src/rogii/folds.py) | Well-level split、fold-local fitting 與 pooled row-RMSE。 |
+| 4 | [Submission](src/rogii/submission.py) | 動態 test IDs、與 `sample_submission.csv` 的 join 及排序。 |
+| 5 | [Fold tests](tests/test_folds_lean.py)、[Metric tests](tests/test_metrics.py) | 資料切分與指標契約。 |
 
-1. [`Flat`](src/rogii/models/flat.py)與 [`P3`](src/rogii/models/p3.py)：先理解
-   last-known baseline，再讀 physical alignment features 與 residual GBDT。
-2. [`Runner`](src/rogii/runner.py)、[`folds`](src/rogii/folds.py)和
-   [`submission alignment`](src/rogii/submission.py)：檢查 well 隔離、pooled
-   row-RMSE、test IDs 的 join 與排序。
-3. [`歷史 full 摘要`](results/recorded_runs.csv)及
-   [`P3 run record`](results/recorded/reset-p3-full.json)：記載 Flat/P3 分別為
-   `15.90985`／`15.45255`，773 wells、3,783,989 OOF rows。這是本機 CV 歷史
-   紀錄，並非新跑結果或 Kaggle 排名；也不足以單獨宣稱穩健優於 baseline。
-4. [`第三方 prediction provenance`](configs/external/rogii03_v5_provenance_20260729.json)：
-   部分外部產物來源／授權／輸入合規未證，已標 `diagnostic_only`，不能當作本人
-   方法的 OOF 或 production ensemble 證據。
+## 保留的結果
 
-以下安裝與 CLI 命令已對照 [`pyproject.toml`](pyproject.toml)及
-[`CLI`](src/rogii/cli.py)查實（source checked），本次沒有安裝套件或執行 CV。
-安裝前需 Python 3.10 以上；目前 dependency ranges 不是完整環境 lock。
+[結果索引](results/recorded_runs.csv) 與兩份 [Flat](results/recorded/reset-flat-full.json)／[P3](results/recorded/reset-p3-full.json) record 記錄以下本機 full CV 摘要：
 
-## 安裝
+| 方法 | Pooled OOF row-RMSE | Wells | OOF rows |
+| --- | ---: | ---: | ---: |
+| Flat | 15.90985 | 773 | 3,783,989 |
+| P3 | 15.45255 | 773 | 3,783,989 |
 
-```powershell
+這些是歷史 CV 紀錄，不是 Kaggle leaderboard 分數，也不是這次文件更新重新訓練所得。[History](results/history.md) 保留比較的不確定性，包括主要信賴區間跨零；較低的點估計本身不足以證明穩健提升。
+
+一般 clone **不包含競賽 `data/`、原始 OOF 或 trained models**。小型 JSON／CSV 能檢查摘要，但不能還原逐列 predictions 或獨立重算 full 分數。
+
+## 安裝與資料
+
+需要 Python 3.10 以上，依賴與 CLI 定義见 [pyproject.toml](pyproject.toml) 與 [CLI](src/rogii/cli.py)。Dependency ranges 尚不是完整鎖定環境；額外 sequence／pretrained／external 路線可能需要自己的依賴。
+
+```sh
 python -m pip install -e ".[dev]"
 ```
 
-本機競賽資料預期位於：
+依競賽存取條件自行取得資料，放在本機唯讀輸入目錄：
 
 ```text
 data/rogii-wellbore-geology-prediction/
@@ -44,68 +42,33 @@ data/rogii-wellbore-geology-prediction/
   sample_submission.csv
 ```
 
-`data/` 完全不納入 Git，程式也拒絕把 run 或 submission 寫入其中。
+程式拒絕把 run 或 submission 輸出寫入 `data/`。大型 cache、fold models、OOF 與 diagnostics 寫入 ignored `.runs/`。
 
-## 使用
+## 本機使用
+
+以下為 PowerShell 範例，需先準備資料和依賴：
 
 ```powershell
 $dataRoot = "data/rogii-wellbore-geology-prediction"
-
 rogii check --data-root $dataRoot
-rogii slp-e0 --data-root $dataRoot --output-root .runs --run-id slp-e0-full --workers 4
-rogii slp-e1 --profile quick --data-root $dataRoot --fold-config configs/folds/main_5fold.csv --output-root .runs --run-id slp-e1-quick --seed 20260725 --workers 4
-rogii slp-e1 --profile full --data-root $dataRoot --fold-config configs/folds/main_5fold.csv --output-root .runs --run-id slp-e1-full --seed 20260725 --workers 4
 rogii run --model p3 --profile quick --data-root $dataRoot
 rogii run --model p3 --profile full --run-id p3-full --data-root $dataRoot
 rogii record --run .runs/p3-full --note "full five-fold reference"
 rogii submit --run .runs/p3-full --data-root $dataRoot --output submission.csv
 ```
 
-- `quick` 預設使用 fold 0，以 stable hash 選 100 個 training wells 與 20 個
-  validation wells；結果會標記為不可與 full OOF 比較。
-- `full` 使用固定 5-fold 與全部 training wells；歷史 full record 為 773 wells。
-- `--folds`、`--max-train-wells`、`--max-validation-wells`、`--seed` 與
-  `--workers` 都可直接覆寫，不需要 protocol receipt。
-- `.runs/` 保存 cache、fold models、OOF 與 diagnostics，但不進 Git。
-- `rogii record` 只把小型 JSON/CSV 摘要寫入 `results/`。
-- `rogii submit` 只產生本機 CSV，不會上傳 Kaggle。
+`quick` 預設使用 fold 0，以 stable hash 選 100 個 training wells 與 20 個 validation wells，結果不可與 full OOF 直接比較。`full` 使用固定五折；歷史 folds 保留於 [main_5fold.csv](configs/folds/main_5fold.csv)。要重現某個舊 run，需核對其資料、folds、seed、model configuration 與環境，而非只選同名 profile。
 
-重現前應先自行依競賽存取條件取得資料，再執行 `rogii check`。建議先跑
-`quick` 核查流程；完整歷史分數需另用相同 folds、seed、model configuration
-與相容環境重跑 `full`，不能由小型摘要還原 OOF predictions。範例 run ID
-若已存在，請換新 ID；[`Runner`](src/rogii/runner.py)會拒絕覆寫既有 run。
-額外 sequence／external 路線的環境依賴需另讀各自 runbook，不把基本安裝視為
-所有研究路線的完整環境。
+`rogii record` 僅寫入小型摘要；`rogii submit` 僅產生本機 CSV，不上傳 Kaggle。既有 run ID 不能覆寫，重跑請使用新 ID。Kaggle 執行入口另見 [notebooks/kaggle/README.md](notebooks/kaggle/README.md)。
 
-`rogii slp-e0` 是獨立的 representation diagnostic，會讀取全部 training
-target `TVT` 與 training-only formation surfaces，量測 polynomial、
-piecewise、prefix recurrence 與 surface identity 的 oracle floor。它固定標記
-`uses_target=true`、`deployable=false`、`submission_eligible=false`，不可用於
-model registry、test inference 或 submission。正式定義見
-[`audit/stratigraphic_program_slam_experiment_protocol.md`](audit/stratigraphic_program_slam_experiment_protocol.md)
-的 7.1 節。
+## 模型與診斷的界線
 
-`rogii slp-e1` 將 inference-safe edge generator 與 target-bearing diagnostic
-harness 分開。前者只使用 horizontal `MD, X, Y, Z, GR, TVT_input` 與
-typewell `TVT, GR` 建立 PF／FF／HT candidates；後者只在 outer-training
-wells 的 artificial cuts 上校準 confidence 與選 threshold，並在 candidate、
-confidence 和 accept/reject 全部固定後才讀 outer-validation target 評分。
-它只輸出 loop-edge feasibility diagnostics，不產生 TVT prediction、不進 model
-registry，也不可用於 submission。正式定義與驗證契約見同一協議的
-[7.2 節](audit/stratigraphic_program_slam_experiment_protocol.md#72-slp-e1--loop-closure-feasibility)。
+Horizontal inference 欄位只使用 `MD, X, Y, Z, GR, TVT_input`，typewell 使用 `TVT, GR`。Target `TVT`、formation surfaces、`Geology` 與 PNG 不能作為 test-time features；任何 learned statistic 只能 fit 該 fold 的 training wells。詳細規則見 [AGENTS.md](AGENTS.md)。
 
-## 開發新模型
+`slp-e0` 是讀取 training target 的 representation diagnostic，固定標記 `uses_target=true`、`deployable=false`、`submission_eligible=false`。`slp-e1` 分離 inference-safe edge generator 與 target-bearing diagnostic harness，只輸出 loop-edge feasibility，不產生 submission TVT prediction。兩者的契約見 [SLP experiment protocol](audit/stratigraphic_program_slam_experiment_protocol.md)。Oracle floor 或 loop feasibility 不等同可部署模型的預測成效。
 
-在 `src/rogii/models/` 實作 `Model` protocol 的 `prepare`、`fit` 與 `predict`，
-再加入 `src/rogii/models/__init__.py` registry。Runner 只把 outer-training
-targets 傳給 `fit`；validation/test 一律使用 inference-safe view。
+## 外部來源與歷史
 
-## 歷史與備份
+[外部 prediction provenance](configs/external/rogii03_v5_provenance_20260729.json) 將來源／授權／輸入合規未證的產物限定為 `diagnostic_only`，不能用作本專案方法的 OOF、teacher fitting、blend weights 或 production ensemble 證據。[外部模型來源](results/external_model_registry_20260728.md) 與本人修改需保持區分。
 
-- Audit V2 正式報告：[`audit/competition_audit_v2.md`](audit/competition_audit_v2.md)
-  （SHA-256 `2A2F1C9C7D3A283AE873351A8E957C1BBE8C00A73547C4DB36EEB156D30680CF`）。
-  它是歷史審計，不是現行研究政策。
-- 清理前完整 Git bundle：
-  `C:\Users\wurre\Desktop\ROGII-legacy-20260725.bundle`
-  （SHA-256 `8679EA07C307DF84E51F91EE3DF5BADE0DB569F694370E021C5C3006F7689F94`）。
-- Bundle 保存舊 Git history；清理前 ignored `artifacts/` 不在 bundle 內。
+[歷史競賽流程分析](audit/competition_audit_v2.md) 和 `results/history.*` 是歷史材料，不是現行開發 gate。清理前的 Git bundle 位於作者本機，不包含清理前 ignored artifacts，也不隨 clone 提供。Repository 目前未附根目錄 LICENSE；第三方資料與程式的權利需依來源分別確認。
